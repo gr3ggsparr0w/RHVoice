@@ -162,6 +162,12 @@ def create_base_env(vars):
         env.AppendUnique(CXXFLAGS=["-std=c++03"])
     if sys.platform.startswith("linux"):
         env.Append(SHLINKFLAGS="-Wl,-soname,${TARGET.file}.${libversion.split('.')[0]}")
+    if sys.platform.startswith("freebsd"):
+        env.Append(SHLINKFLAGS="-Wl,-soname,${TARGET.file}.${libversion.split('.')[0]}")
+        env.AppendUnique(CXXFLAGS=['-std=c++11'])
+        env.Replace(CC='clang')
+        env.Replace(CXX='clang++')
+        env.Replace(CPP='clang-cpp')
     return env
 
 def display_help(env,vars):
@@ -214,7 +220,7 @@ def configure(env):
             env["audio_libs"].add("libao")
         if conf.CheckPKG("portaudio-2.0"):
             env["audio_libs"].add("portaudio")
-#        has_giomm=conf.CheckPKG("giomm-2.4")
+        has_giomm=conf.CheckPKG("giomm-2.4")
     if env["PLATFORM"]=="win32":
         env.AppendUnique(LIBS="kernel32")
     conf.Finish()
